@@ -9,7 +9,7 @@ from func import (
     load_data,
 )
 
-# DataFrames for testing (fake only)
+## DataFrames for testing (fake only)
 
 def make_sample_df() -> pd.DataFrame:
 
@@ -40,6 +40,7 @@ def test_drop_missing_income() -> None:
     assert len(result) == 3, f"Expected 3 rows after drop, got {len(result)}"
     print("PASS — test_drop_missing_income")
 
+    # drop_missing_income should remove exactly the rows where Income is NaN.
 
 def test_create_features_total_spending() -> None:
 
@@ -53,7 +54,8 @@ def test_create_features_total_spending() -> None:
         "TotalSpending does not match sum of Mnt* columns"
     print("PASS — test_create_features_total_spending")
 
-
+    # TotalSpending should equal the sum of the five Mnt* columns.
+    
 def test_create_features_family_size() -> None:
 
     df = make_sample_df().dropna(subset=['Income'])
@@ -79,6 +81,7 @@ def test_group_education() -> None:
         f"Unexpected groups: {unique - valid_groups}"
     print("PASS — test_group_education")
 
+    # group_education should map all 5 categories to High or Low.
 
 def test_remove_outliers() -> None:
 
@@ -90,6 +93,7 @@ def test_remove_outliers() -> None:
     assert result['Income'].max() <= 600_000, "Income outlier not removed"
     print("PASS — test_remove_outliers")
 
+    # rows with Age > 100 or Income > 600,000 should be removed.
 
 def test_encode_categoricals_no_bool() -> None:
 
@@ -102,7 +106,9 @@ def test_encode_categoricals_no_bool() -> None:
             f"Column {col} is bool — should be int"
     print("PASS — test_encode_categoricals_no_bool")
 
-# Integration Test — full pipeline end-to-end
+    # encoded dummy columns should be integer dtype, not bool.
+
+## Integration Test — full pipeline end-to-end
 
 def test_full_pipeline() -> None:
 
@@ -131,7 +137,7 @@ def test_full_pipeline() -> None:
 
     print(f"PASS — test_full_pipeline  (R²={result.rsquared:.3f})")
 
-# Run all tests
+## Run all tests
 
 if __name__ == '__main__':
     print("=" * 50)
