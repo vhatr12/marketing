@@ -16,6 +16,8 @@ PURCHASE_COLS = [
 
 # 1. Data Loading & Cleaning
 
+ """ Load the marketing campaign dataset from an Excel file """
+
 def load_data(filepath: str) -> pd.DataFrame:
 
     df = pd.read_excel(filepath, sheet_name='marketing_campaign')
@@ -24,6 +26,16 @@ def load_data(filepath: str) -> pd.DataFrame:
     return df
 
 def drop_missing_income(df: pd.DataFrame) -> pd.DataFrame:
+    """ Remove rows where Income is missing.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input DataFrame (may contain NaN in Income column).
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with no missing Income values. 
+    """
 
     missing = df.isnull().sum()
     missing = missing[missing > 0]
@@ -39,6 +51,22 @@ def remove_outliers(df: pd.DataFrame,
                     max_age: int = 100,
                     max_income: int = 600_000) -> pd.DataFrame:
 
+    """
+    Remove implausible outliers for Age and Income.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame that must already contain 'Age' and 'Income' columns.
+    max_age : int
+        Maximum plausible age (default 100).
+    max_income : int
+        Maximum plausible annual income in USD (default 600,000).
+    Returns
+    -------
+    pd.DataFrame
+        Filtered DataFrame.
+    """
+
     df = df[(df['Age'] <= max_age) & (df['Income'] <= max_income)]
     return df
 
@@ -46,6 +74,7 @@ def remove_outliers(df: pd.DataFrame,
 
 def create_features(df: pd.DataFrame, reference_year: int = 2026) -> pd.DataFrame:
     """
+    Add derived features to the DataFrame.
     New columns created:
     - TotalSpending  : sum of all spending category columns
     - Age            : reference_year minus Year_Birth
@@ -73,6 +102,7 @@ def create_features(df: pd.DataFrame, reference_year: int = 2026) -> pd.DataFram
 
 def group_education(df: pd.DataFrame) -> pd.DataFrame:
     """
+    Collapse the five Education categories into two groups.
     Mapping:
     - 'High' : Graduation, Master, PhD
     - 'Low'  : Basic, 2n Cycle
@@ -92,7 +122,8 @@ def group_education(df: pd.DataFrame) -> pd.DataFrame:
 
 def encode_categoricals(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
 
-    # to avoid ValueError when passed to statsmodels OLS
+    """ to avoid ValueError when passed to statsmodels OLS """
+    
     df_encoded = pd.get_dummies(df, columns=['Education_grouped'], drop_first=True)
     bool_cols = df_encoded.select_dtypes(include='bool').columns
     df_encoded[bool_cols] = df_encoded[bool_cols].astype(int)
@@ -103,6 +134,7 @@ def encode_categoricals(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
 # 3. Visualisation
 
 def plot_spending_distribution(df: pd.DataFrame) -> None:
+    """ Plot a histogram of TotalSpending with descriptive statistics. """"
 
     plt.figure(figsize=(8, 5))
     plt.hist(df['TotalSpending'], bins=50, color='steelblue', edgecolor='white')
@@ -117,6 +149,7 @@ def plot_spending_distribution(df: pd.DataFrame) -> None:
     print(f'Skewness: {df["TotalSpending"].skew():.3f}')
 
 def plot_income_vs_spending(df: pd.DataFrame) -> None:
+    """ Scatter plot of Income against TotalSpending with Pearson correlation.""""
 
     plt.figure(figsize=(8, 5))
     plt.scatter(df['Income'], df['TotalSpending'],
