@@ -16,9 +16,11 @@ PURCHASE_COLS = [
 
 # 1. Data Loading & Cleaning
 
- """ Load the marketing campaign dataset from an Excel file """
+ 
 
 def load_data(filepath: str) -> pd.DataFrame:
+    """ Load the marketing campaign dataset from an Excel file 
+    """
 
     df = pd.read_excel(filepath, sheet_name='marketing_campaign')
     print(f"Loaded: {df.shape[0]} rows x {df.shape[1]} columns")
@@ -122,7 +124,8 @@ def group_education(df: pd.DataFrame) -> pd.DataFrame:
 
 def encode_categoricals(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
 
-    """ to avoid ValueError when passed to statsmodels OLS """
+    """ to avoid ValueError when passed to statsmodels OLS 
+    """
     
     df_encoded = pd.get_dummies(df, columns=['Education_grouped'], drop_first=True)
     bool_cols = df_encoded.select_dtypes(include='bool').columns
@@ -134,7 +137,9 @@ def encode_categoricals(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
 # 3. Visualisation
 
 def plot_spending_distribution(df: pd.DataFrame) -> None:
-    """ Plot a histogram of TotalSpending with descriptive statistics. """"
+    
+    """ Plot a histogram of TotalSpending with descriptive statistics. 
+    """
 
     plt.figure(figsize=(8, 5))
     plt.hist(df['TotalSpending'], bins=50, color='steelblue', edgecolor='white')
@@ -149,8 +154,10 @@ def plot_spending_distribution(df: pd.DataFrame) -> None:
     print(f'Skewness: {df["TotalSpending"].skew():.3f}')
 
 def plot_income_vs_spending(df: pd.DataFrame) -> None:
-    """ Scatter plot of Income against TotalSpending with Pearson correlation.""""
-
+    
+    """
+    Scatter plot of Income against TotalSpending with Pearson correlation.
+    """
     plt.figure(figsize=(8, 5))
     plt.scatter(df['Income'], df['TotalSpending'],
                 alpha=0.3, s=15, color='steelblue')
